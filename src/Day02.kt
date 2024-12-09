@@ -18,8 +18,10 @@ class Day02 : Day<Int,List<Report>>(2, 246, 4, 318) {
     }
 
     private fun <T> List<T>.getAllCombinationsWithOneElementRemoved(): List<List<T>> {
-        return (indices).map { i -> take(i) + drop(i + 1) }
+        return (indices).map { withoutElementAt(it) }
     }
+
+    private fun <T> List<T>.withoutElementAt(index: Int): List<T> = filterIndexed { i, _ -> index != i }
 }
 
 private typealias Report = List<Int>
