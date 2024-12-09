@@ -1,21 +1,17 @@
-fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+import kotlin.math.absoluteValue
+
+class Day01 : Day<Int,List<String>>(11, 1765812, 0, 0) {
+    override fun parseInput(input: String): List<String> = input.lines().filter { it.isNotEmpty() }
+
+    override fun part1(input: List<String>): Int {
+        val lists = (0..1).toList().map { i -> input.map { it.split("   ")[i].toInt() } }
+        return lists.map { it.sorted() }
+            .toPair()
+            .let { it.first zip it.second }
+            .sumOf { (it.first - it.second).absoluteValue }
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    override fun part2(input: List<String>): Int {
+        return -1
     }
-
-    // Test if implementation meets criteria from the description, like:
-    check(part1(listOf("test_input")) == 1)
-
-    // Or read a large test input from the `src/Day01_test.txt` file:
-    val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
-
-    // Read the input from the `src/Day01.txt` file.
-    val input = readInput("Day01")
-    part1(input).println()
-    part2(input).println()
 }
