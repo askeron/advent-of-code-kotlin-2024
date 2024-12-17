@@ -91,23 +91,26 @@ fun <K, V> Map<K, V>.inverted() = entries.associate{(k,v)-> v to k}
 
 fun Iterable<Point>.mirror() = map { Point(it.y, it.x) }.toList()
 
-fun Iterable<Point>.matrixString(pointChar: Char, noPointChar: Char): String =
-    matrixString { x, y -> if (contains(Point(x, y))) pointChar else noPointChar }
+fun Iterable<Point>.maxPoint(): Point = Point(maxOf { it.x }, maxOf { it.y })
 
-fun Iterable<Point>.matrixString(charFunction: (Int, Int) -> Char): String {
-    return (0..this.maxOf { it.y }).joinToString("\n") { y ->
-        (0..this.maxOf { it.x }).joinToString("") { x ->
+fun Iterable<Point>.matrixString(pointChar: Char, noPointChar: Char): String =
+    matrixString(maxPoint = maxPoint()) { x, y -> if (contains(Point(x, y))) pointChar else noPointChar }
+
+fun matrixString(maxPoint: Point, charFunction: (Int, Int) -> Char): String {
+    return (0..maxPoint.y).joinToString("\n") { y ->
+        (0..maxPoint.x).joinToString("") { x ->
             charFunction.invoke(x, y).toString()
         }
     }
 }
 
-fun Map<Point, Int>.matrixString() = keys.matrixString { x, y -> this[Point(x,y)]!!.digitToChar()}
+fun Map<Point, Int>.matrixString() = matrixString(maxPoint = keys.maxPoint()) { x, y -> this[Point(x,y)]!!.digitToChar()}
 
 data class Point(val x: Int, val y: Int) {
     operator fun unaryMinus() = Point(-x, -y)
     operator fun plus(b: Point) = Point(x + b.x, y + b.y)
     operator fun minus(b: Point) = this + (-b)
+    operator fun times(b: Point) = Point(x * b.x, y * b.y)
     val values = listOf(x, y)
 
     val neighboursNotDiagonal by lazy { listOf(
