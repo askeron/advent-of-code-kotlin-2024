@@ -8,7 +8,7 @@ fun main() {
         }
     }
 
-    val longRunningDays = listOf(25)
+    val longRunningDays = listOf(14)
 
     (1..25).asSequence()
         .filter { it !in longRunningDays }

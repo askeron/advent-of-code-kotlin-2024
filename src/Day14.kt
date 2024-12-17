@@ -1,4 +1,4 @@
-class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, 0, 0) {
+class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, -1, 7412) {
     override fun parseInput(input: String): List<Robot> = input.lines().filter { it.isNotEmpty() }
         .map {
             val (position, velocity) = it.split(" ").map {
@@ -22,7 +22,25 @@ class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, 0, 0) {
     }
 
     override fun part2(robots: List<Robot>): Int {
-        return -1
+        val state = State(robots)
+        if (state.testRun) return -1
+        println("initial state:")
+        state.println()
+        for (i in 1..10000000) {
+            robots.forEach { it.move(state) }
+            println("state after $i seconds:")
+            state.println()
+
+            // // first try assuming all robot would make a non filled christmas tree
+            // val linesWithCount = robots.map { it.position }.distinct().groupingBy { it.y }.eachCount()
+            // if (linesWithCount.entries.count { it.key > 4 } <= 6) return i
+
+            // after knowing the picture
+            val positions = robots.map { it.position }
+            val robotsWithNeighboursCount = positions.count { it.neighboursNotDiagonal.any { it in positions } }
+            if (robotsWithNeighboursCount > robots.size / 2) return i
+        }
+        error("no solution found")
     }
 
     class Robot(position: Point, private val velocity: Point) {
