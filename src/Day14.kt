@@ -1,4 +1,4 @@
-class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, -1, 7412) {
+class Day14 : Day<Int, List<Day14.Robot>>(12, 217328832, -1, 7412) {
     override fun parseInput(input: String): List<Robot> = input.lines().filter { it.isNotEmpty() }
         .map {
             val (position, velocity) = it.split(" ").map {
@@ -10,12 +10,8 @@ class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, -1, 7412) {
 
     override fun part1(robots: List<Robot>): Int {
         val state = State(robots)
-        println("initial state:")
-        state.println()
-        for (i in 1..100) {
+        repeat(100) {
             robots.forEach { it.move(state) }
-            println("state after $i seconds:")
-            state.println()
         }
         return state.quadrants.map { quadrant -> robots.count { quadrant.contains(it.position) } }
             .reduce(Int::times)
@@ -24,21 +20,11 @@ class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, -1, 7412) {
     override fun part2(robots: List<Robot>): Int {
         val state = State(robots)
         if (state.testRun) return -1
-        println("initial state:")
-        state.println()
-        for (i in 1..10000000) {
+        repeat(10000000) {
             robots.forEach { it.move(state) }
-            println("state after $i seconds:")
-            state.println()
-
-            // // first try assuming all robot would make a non filled christmas tree
-            // val linesWithCount = robots.map { it.position }.distinct().groupingBy { it.y }.eachCount()
-            // if (linesWithCount.entries.count { it.key > 4 } <= 6) return i
-
-            // after knowing the picture
             val positions = robots.map { it.position }
             val robotsWithNeighboursCount = positions.count { it.neighboursNotDiagonal.any { it in positions } }
-            if (robotsWithNeighboursCount > robots.size / 2) return i
+            if (robotsWithNeighboursCount > robots.size / 2) return it + 1
         }
         error("no solution found")
     }
@@ -66,16 +52,8 @@ class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, -1, 7412) {
             Point(1, 0),
             Point(0, 1),
             Point(1, 1),
-        )
-            .map { it * (roomMiddlePoint + Point(1, 1)) }
+        ).map { it * (roomMiddlePoint + Point(1, 1)) }
             .map { Quadrant(Point(0, 0) + it, roomMiddlePoint - Point(1, 1) + it) }
-
-        fun println() {
-            val positions = robots.map { it.position }
-            val positionsWithCount = positions.groupingBy { it }.eachCount()
-            val matrix = matrixString(maxPoint = roomMaxPoint) { x, y -> positionsWithCount[Point(x, y)]?.digitToChar() ?: '.' }
-            println(matrix)
-        }
     }
 
     data class Quadrant(val minPoint: Point, val maxPoint: Point) {
@@ -83,5 +61,4 @@ class Day14 : Day<Int,List<Day14.Robot>>(12, 217328832, -1, 7412) {
             return point.x in minPoint.x..maxPoint.x && point.y in minPoint.y..maxPoint.y
         }
     }
-
 }
